@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>유니폼 피팅 랩</title>
+<title>단체복 피팅 랩</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Hahmlet:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Nanum+Myeongjo:wght@800&family=Nanum+Pen+Script&display=swap">
 <style>
 /* Layout: 피팅 스테이지(좌·고정, 테크팩 도트 그리드) + 작업 패널(우). 모바일은 스테이지 상단 고정 + 패널 스크롤 */
 :root{
   --bg:#ECF0EE; --surface:#FFFFFF; --sunk:#F3F6F5; --ink:#16201E; --muted:#5A6865;
   --line:#D2DAD7; --line-strong:#AEBAB6; --accent:#1C6A65; --accent-soft:#DCEDEA; --on-accent:#FFFFFF;
-  --stage:#E1E7E4; --dot:rgba(22,32,30,.11); --shadow:rgba(22,32,30,.10);
+  --stage:#E1E7E4; --dot:rgba(22,32,30,.11); --shadow:rgba(22,32,30,.10); --danger:#B3261E;
   --f-display:"Hahmlet","Nanum Myeongjo",Georgia,serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -22,13 +22,13 @@
   :root:not([data-theme="light"]){
     --bg:#0F1514; --surface:#171E1D; --sunk:#1D2524; --ink:#E4EBE9; --muted:#93A29F;
     --line:#2B3634; --line-strong:#465451; --accent:#62C0B6; --accent-soft:#1D3533; --on-accent:#0B1413;
-    --stage:#131A19; --dot:rgba(228,235,233,.07); --shadow:rgba(0,0,0,.4); color-scheme:dark;
+    --stage:#131A19; --dot:rgba(228,235,233,.07); --shadow:rgba(0,0,0,.4); --danger:#E5675F; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0F1514; --surface:#171E1D; --sunk:#1D2524; --ink:#E4EBE9; --muted:#93A29F;
   --line:#2B3634; --line-strong:#465451; --accent:#62C0B6; --accent-soft:#1D3533; --on-accent:#0B1413;
-  --stage:#131A19; --dot:rgba(228,235,233,.07); --shadow:rgba(0,0,0,.4); color-scheme:dark;
+  --stage:#131A19; --dot:rgba(228,235,233,.07); --shadow:rgba(0,0,0,.4); --danger:#E5675F; color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{
@@ -37,17 +37,16 @@ body{
   padding-block:0 40px;
 }
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-button{font:inherit;color:inherit}
+button,input{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .wrap{max-width:1240px;margin:0 auto}
+.sr{position:absolute;left:-9999px}
 
-/* Header */
 .top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:20px 16px}
 .eyebrow{font:500 .7rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 .top h1{font:600 1.75rem/1.15 var(--f-display);margin:6px 0 0;letter-spacing:-.01em;text-wrap:balance}
-.top p{margin:4px 0 0;color:var(--muted);font-size:.9rem;max-width:52ch}
+.top p{margin:4px 0 0;color:var(--muted);font-size:.9rem;max-width:56ch}
 
-/* App grid */
 .app{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
 .stage{
   background-color:var(--stage); background-image:radial-gradient(var(--dot) 1px,transparent 1.3px); background-size:14px 14px;
@@ -63,7 +62,7 @@ button{font:inherit;color:inherit}
   .top h1{font-size:1.4rem}
 }
 .stage-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;flex-wrap:wrap}
-.tag{font:500 .7rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;align-items:center}
+.tag{font:500 .7rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .tag b{color:var(--ink);font-weight:500}
 .tools{display:flex;gap:6px}
 .stage svg#fig{flex:1;min-height:0;width:100%;display:block}
@@ -71,7 +70,6 @@ button{font:inherit;color:inherit}
 .ruler text{fill:var(--muted);font:9px var(--f-mono)}
 .ruler path{stroke:var(--line-strong)}
 
-/* Controls */
 .btn{
   display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);
   border-radius:8px;padding:7px 11px;font-size:.84rem;font-weight:500;cursor:pointer;white-space:nowrap;
@@ -80,16 +78,20 @@ button{font:inherit;color:inherit}
 .btn:hover:not(:disabled){border-color:var(--line-strong)}
 .btn:disabled{opacity:.42;cursor:not-allowed}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.link{border:0;background:none;padding:4px 0;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
 .btn svg{width:15px;height:15px;flex:none}
 .panel{display:flex;flex-direction:column;gap:16px;min-width:0}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
 .sec{display:flex;flex-direction:column;gap:10px}
 .sec + .sec{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
 .sec-title{font:500 .72rem/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.sec-title span{text-transform:none;letter-spacing:0;font-family:var(--f-body);color:var(--ink);font-size:.82rem}
+.sec-title span{text-transform:none;letter-spacing:0;font-family:var(--f-body);color:var(--ink);font-size:.82rem;text-align:right}
 h2.card-title{font:600 1.05rem/1.3 var(--f-display);margin:0 0 12px}
+.hint{font-size:.8rem;color:var(--muted);margin:0}
+.hint.warn{color:var(--danger)}
 
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.chips.wrap{flex-wrap:wrap;overflow:visible}
 .chip{
   display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--sunk);border-radius:999px;
   padding:6px 12px 6px 7px;font-size:.84rem;cursor:pointer;white-space:nowrap;
@@ -102,9 +104,10 @@ h2.card-title{font:600 1.05rem/1.3 var(--f-display);margin:0 0 12px}
 
 .tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--line);margin:-4px -4px 16px;padding:0 4px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{border:0;background:none;padding:10px 12px;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--muted);font-weight:500;cursor:pointer;white-space:nowrap}
+.tab{border:0;background:none;padding:10px 14px;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--muted);font-weight:500;cursor:pointer;white-space:nowrap}
 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 
+.grp-label{font-size:.78rem;font-weight:600;color:var(--ink);margin:4px 0 -2px}
 .styles{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
 .style-card{
   border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:8px 6px;cursor:pointer;
@@ -112,16 +115,16 @@ h2.card-title{font:600 1.05rem/1.3 var(--f-display);margin:0 0 12px}
 }
 .style-card:hover{border-color:var(--line-strong)}
 .style-card[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
-.style-card svg{width:100%;height:78px}
+.style-card svg{width:100%;height:80px}
 .style-card .nm{font-size:.82rem;font-weight:500;line-height:1.3}
 .style-card .nt{font-size:.7rem;color:var(--muted);line-height:1.3}
-.none-ico{stroke:var(--line-strong);fill:none}
 
 .seg{display:inline-flex;background:var(--sunk);border:1px solid var(--line);border-radius:9px;padding:3px;gap:2px;align-self:flex-start;flex-wrap:wrap}
 .seg button{border:0;background:none;padding:6px 12px;border-radius:6px;font-size:.84rem;color:var(--muted);cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px var(--shadow)}
+.seg button small{display:block;font-size:.68rem;color:var(--muted);line-height:1.2}
 
-.current{display:flex;align-items:center;gap:12px}
+.current{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .current .big{width:44px;height:44px;border-radius:10px;border:1px solid var(--line-strong);flex:none}
 .current .nm{font-weight:600}
 .hex{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -133,52 +136,48 @@ h2.card-title{font:600 1.05rem/1.3 var(--f-display);margin:0 0 12px}
 .sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
 .custom{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .custom input[type=color]{width:44px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:2px;cursor:pointer}
-.custom input[type=text]{
-  width:110px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);
-  font:500 .86rem var(--f-mono);padding:0 10px;text-transform:uppercase;
+.field{
+  height:38px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:0 10px;font-size:.9rem;min-width:0;
 }
-.custom input[aria-invalid="true"]{border-color:#C0392B}
+.custom .field{width:110px;font:500 .86rem var(--f-mono);text-transform:uppercase}
+.field[aria-invalid="true"]{border-color:var(--danger)}
+.form-row{display:flex;flex-direction:column;gap:4px}
+.form-row label{font-size:.78rem;color:var(--muted)}
 
-.toggles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.tg{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--sunk);cursor:pointer;text-align:left}
-.tg .box{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--line-strong);flex:none;display:grid;place-items:center}
-.tg[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
-.tg[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent)}
-.tg[aria-pressed="true"] .box::after{content:"";width:8px;height:4px;border:2px solid var(--on-accent);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
-.tg small{display:block;color:var(--muted);font-size:.72rem}
+.fonts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.font-card{border:1px solid var(--line);background:var(--sunk);border-radius:10px;padding:10px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0}
+.font-card .smp{font-size:1.35rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.font-card .nt{font-size:.72rem;color:var(--muted)}
+.font-card[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
 
 .table-wrap{overflow-x:auto}
-table.spec{width:100%;border-collapse:collapse;font-size:.84rem}
-.spec th{font:500 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
-.spec td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
-.spec td:first-child{white-space:nowrap;color:var(--muted);font-size:.8rem}
-.spec td small{display:block;color:var(--muted);font-size:.72rem}
-.spec tr:last-child td{border-bottom:0}
-.cl{display:inline-flex;align-items:flex-start;gap:6px;line-height:1.3}
-.cl .hex{display:block;font-size:.72rem}
-.cl i{width:14px;height:14px;border-radius:4px;border:1px solid var(--line-strong);flex:none;margin-top:2px}
+table.spec{width:100%;border-collapse:collapse;font-size:.86rem}
+.spec th{font:500 .74rem var(--f-body);color:var(--muted);text-align:left;padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap;width:1%}
+.spec td{padding:9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.spec tr:last-child th,.spec tr:last-child td{border-bottom:0}
+.spec td small{color:var(--muted);font-size:.76rem}
+.cl{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.cl i{width:14px;height:14px;border-radius:4px;border:1px solid var(--line-strong);flex:none}
 .row-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
 pre#spec-text{position:absolute;left:-9999px;top:0;white-space:pre}
 
 .save-row{display:flex;gap:8px}
-.save-row input{
-  flex:1;min-width:0;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:0 10px;font:inherit;font-size:.88rem;
-}
+.save-row .field{flex:1}
 .looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:12px}
 .look{position:relative;border:1px solid var(--line);border-radius:10px;background:var(--sunk);padding:6px 6px 8px;display:flex;flex-direction:column;align-items:center}
 .look .load{border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;width:100%}
 .look svg{width:100%;height:130px}
 .look .nm{font-size:.78rem;font-weight:500;overflow-wrap:anywhere;text-align:center}
 .look .del{position:absolute;top:4px;right:4px;border:1px solid var(--line);background:var(--surface);border-radius:6px;font-size:.68rem;padding:2px 6px;cursor:pointer;color:var(--muted)}
-.look .del.armed{color:var(--on-accent);background:#B3261E;border-color:#B3261E}
+.look .del.armed{color:#FFFFFF;background:var(--danger);border-color:var(--danger)}
 .empty{color:var(--muted);font-size:.85rem;margin:10px 0 0}
 
 .toast{
   position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);
   background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:.86rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:20;
+  max-width:calc(100vw - 32px);text-align:center;
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
-#fig .layer{transition:opacity .2s}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media (max-width:420px){.btn .lbl{display:none}.btn{padding:7px 9px}}
 </style>
@@ -188,9 +187,9 @@ pre#spec-text{position:absolute;left:-9999px;top:0;white-space:pre}
 <div class="wrap">
   <header class="top">
     <div>
-      <div class="eyebrow">Virtual Fitting · Tech Pack</div>
-      <h1>유니폼 피팅 랩</h1>
-      <p>디자인과 색상을 고르면 마네킹에 바로 입혀 봅니다. 포인트 색, 패턴, 소품까지 조합해 시안을 비교해 보세요.</p>
+      <div class="eyebrow">Group Apparel · Virtual Fitting</div>
+      <h1>단체복 피팅 랩</h1>
+      <p>상의 스타일과 배색, 팀명 프린트를 골라 마네킹에 바로 입혀 봅니다. 반티·동아리 후드·워크숍 카라티 시안을 주문 전에 비교해 보세요.</p>
     </div>
   </header>
 
@@ -201,26 +200,26 @@ pre#spec-text{position:absolute;left:-9999px;top:0;white-space:pre}
         <div class="tools">
           <button class="btn" id="btn-undo" data-act="undo" data-key="undo" title="실행 취소">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl">실행 취소</span></button>
-          <button class="btn" data-act="random" data-key="random" title="랜덤 코디">
+          <button class="btn" data-act="random" data-key="random" title="랜덤 디자인">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg><span class="lbl">랜덤</span></button>
-          <button class="btn" data-act="reset" data-key="reset" title="기본 코디로 초기화">
+          <button class="btn" data-act="reset" data-key="reset" title="기본 디자인으로 초기화">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span class="lbl">초기화</span></button>
         </div>
       </div>
-      <svg id="fig" viewBox="0 18 300 604" preserveAspectRatio="xMidYMid meet" role="img" aria-label="현재 코디를 입은 마네킹"></svg>
+      <svg id="fig" viewBox="0 18 300 604" preserveAspectRatio="xMidYMid meet" role="img" aria-label="현재 디자인의 상의를 입은 마네킹"></svg>
       <div class="stage-foot" id="caption"></div>
     </section>
 
     <aside class="panel">
       <div class="card">
         <div class="sec">
-          <h3 class="sec-title">예시 코디</h3>
+          <h3 class="sec-title">예시 디자인</h3>
           <div class="chips" id="presets"></div>
         </div>
       </div>
 
       <div class="card">
-        <nav class="tabs" role="tablist" id="tabs" aria-label="편집 부위"></nav>
+        <nav class="tabs" role="tablist" id="tabs" aria-label="편집 항목"></nav>
         <div id="panel-body" role="tabpanel"></div>
       </div>
 
@@ -235,11 +234,11 @@ pre#spec-text{position:absolute;left:-9999px;top:0;white-space:pre}
       </div>
 
       <div class="card">
-        <h2 class="card-title">저장한 코디</h2>
+        <h2 class="card-title">저장한 디자인</h2>
         <form class="save-row" id="save-form">
-          <label for="look-name" class="hex" style="position:absolute;left:-9999px">코디 이름</label>
-          <input id="look-name" type="text" maxlength="24" placeholder="예: 3병동 하계 근무복 A안">
-          <button class="btn primary" type="submit">현재 코디 저장</button>
+          <label for="look-name" class="sr">디자인 이름</label>
+          <input id="look-name" class="field" type="text" maxlength="24" placeholder="예: 2반 반티 A안">
+          <button class="btn primary" type="submit">현재 디자인 저장</button>
         </form>
         <div id="looks"></div>
       </div>
@@ -250,31 +249,26 @@ pre#spec-text{position:absolute;left:-9999px;top:0;white-space:pre}
 
 <script>
 /* ============================================================
-   1) 데이터 — 디자인·색상·패턴·예시 코디 (확장 지점)
+   1) 데이터 — 색상·패턴·서체·예시 디자인 (확장 지점)
    ============================================================ */
 const PALETTE = [
-  { group:'의료 유니폼', colors:[['실 블루','#8FA6D0'],['로열 블루','#2E58A6'],['네이비','#1F2A44'],['틸','#23817E'],['헌터 그린','#2F5D45'],['와인','#6E2735'],['차콜','#3A4249'],['화이트','#F6F6F2']] },
-  { group:'뉴트럴', colors:[['블랙','#1D1D1F'],['그레이','#9AA0A6'],['스톤','#C9C4BA'],['베이지','#D9C7AC'],['카멜','#B3874F'],['아이보리','#F2ECDF']] },
-  { group:'파스텔', colors:[['민트','#A9DCCB'],['스카이','#B5D5EF'],['라일락','#C8B7E2'],['로즈','#E9B5C1'],['피치','#F4C4A6'],['버터','#F3E2A0']] },
-  { group:'비비드', colors:[['레드','#D2283E'],['오렌지','#EE8A2A'],['옐로','#EFC12F'],['그린','#2E9E4F'],['블루','#1E63D2'],['퍼플','#6A41B3'],['마젠타','#BE1E7C']] },
+  { group:'베이직', colors:[['화이트','#F6F6F2'],['아이보리','#F2ECDF'],['멜란지 그레이','#B9BBBD'],['차콜','#3A4249'],['네이비','#1F2A44'],['블랙','#1D1D1F']] },
+  { group:'팀 컬러', colors:[['레드','#D2283E'],['버건디','#6E2735'],['오렌지','#EE8A2A'],['옐로','#EFC12F'],['그린','#2E9E4F'],['틸','#23817E'],['로열 블루','#1E63D2'],['스카이','#6FB3E6'],['퍼플','#6A41B3'],['핫핑크','#E23B8A']] },
+  { group:'파스텔', colors:[['민트','#A9DCCB'],['파스텔 블루','#B5D5EF'],['라일락','#C8B7E2'],['로즈','#E9B5C1'],['피치','#F4C4A6'],['버터','#F3E2A0']] },
+  { group:'어스톤', colors:[['베이지','#D9C7AC'],['스톤','#C9C4BA'],['카멜','#B3874F'],['카키','#8A8358'],['올리브','#5B6237'],['브라운','#6B4A35']] },
 ];
 const SKINS = [['화이트 마네킹','#ECE8E2'],['라이트 베이지','#E8CDB2'],['미디엄','#C99B76'],['딥 브라운','#8A5A40'],['스틸 그레이','#9EA4A6']];
+const BASES = [['데님','#3F5573'],['블랙 팬츠','#26282D'],['베이지 치노','#CDBB9C']];
 const BUILDS = { slim:{label:'슬림',k:.92}, regular:{label:'보통',k:1}, broad:{label:'넓음',k:1.1} };
-const PATTERNS = [['solid','솔리드'],['stripe','핀스트라이프'],['check','깅엄 체크'],['dot','도트']];
-const PARTS = [
-  { id:'top',    label:'상의',   garment:true, trimLabel:'포인트(파이핑·칼라·단추)' },
-  { id:'bottom', label:'하의',   garment:true, trimLabel:'포인트(허리끈)' },
-  { id:'outer',  label:'아우터', garment:true, trimLabel:'포인트(단추·여밈)' },
-  { id:'shoes',  label:'신발',   trimLabel:'밑창' },
-  { id:'acc',    label:'소품' },
-  { id:'body',   label:'마네킹' },
-];
-const ACCS = [
-  ['badge','명찰','가슴 왼쪽 이름표'],
-  ['lanyard','사원증','목걸이형 ID 카드'],
-  ['steth','청진기','목에 거는 형태'],
-  ['cap','수술모','스크럽 캡'],
-];
+const PATTERNS = [['solid','솔리드'],['border','보더 스트라이프'],['check','깅엄 체크'],['dot','도트']];
+const FONTS = {
+  gothic:  { label:'블랙 고딕', note:'굵고 또렷함', css:"'Black Han Sans'", w:400, k:1 },
+  dohyeon: { label:'도현',     note:'친근한 고딕', css:"'Do Hyeon'", w:400, k:1 },
+  myeongjo:{ label:'명조',     note:'클래식',     css:"'Nanum Myeongjo'", w:800, k:.95 },
+  pen:     { label:'손글씨',   note:'캐주얼',     css:"'Nanum Pen Script'", w:400, k:1.3 },
+};
+const PRINT_POS = [['chest','왼쪽 가슴'],['center','가슴 중앙'],['none','없음']];
+const TABS = [['style','스타일'],['color','색상·배색'],['print','프린트'],['body','마네킹']];
 
 /* ============================================================
    2) 색상 유틸
@@ -285,25 +279,30 @@ const mix = (h,t) => { const [r,g,b]=rgb(h), to=t<0?0:255, a=Math.abs(t); return
 const lum = h => { const [r,g,b]=rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4;}); return .2126*r+.7152*g+.0722*b; };
 const lineOf = c => mix(c, lum(c) < .05 ? .32 : -.36);
 const accentOf = c => lum(c) > .42 ? mix(c,-.24) : mix(c,.3);
-const NAMES = new Map([...PALETTE.flatMap(g=>g.colors), ...SKINS].map(([n,h])=>[h.toUpperCase(),n]));
+const NAMES = new Map([...PALETTE.flatMap(g=>g.colors), ...SKINS, ...BASES].map(([n,h])=>[h.toUpperCase(),n]));
 const colorName = h => NAMES.get(h.toUpperCase()) || '사용자 지정';
+const esc = t => String(t).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ============================================================
    3) SVG 도형 — 좌표계 300×640, 중심선 x=150
+   z = { fill, line } 하나의 색 영역(몸판 b · 소매 s · 배색 t)
    ============================================================ */
-const P = (d,f) => `<path d="${d}" fill="${f.fill}" stroke="${f.line}" stroke-width="1.1" stroke-linejoin="round"/><path d="${d}" fill="url(#shade)"/>`;
+const P = (d,z) => `<path d="${d}" fill="${z.fill}" stroke="${z.line}" stroke-width="1.1" stroke-linejoin="round"/><path d="${d}" fill="url(#shade)"/>`;
 const S = (d,c,w=1.1,dash=false) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"${dash?' stroke-dasharray="2.6 2"':''}/>`;
-const T = (d,f) => `<path d="${d}" fill="${f.trim}" stroke="${f.trimLine}" stroke-width=".9" stroke-linejoin="round"/>`;
-const B = (x,y,f,r=2.4) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f.trim}" stroke="${f.trimLine}" stroke-width=".8"/>`;
+const RIB = (d,z,w=3.4) => S(d,z.line,w+1.6) + S(d,z.fill,w);
+const B = (x,y,z,r=2.3) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${z.fill}" stroke="${z.line}" stroke-width=".8"/>`;
 const mir = s => `<g transform="matrix(-1 0 0 1 300 0)">${s}</g>`;
 const both = s => s + mir(s);
 const ribs = (x0,x1,y0,y1,step,c) => { let d=''; for(let x=x0+step;x<x1;x+=step) d+=`M${x},${y0} V${y1} `; return S(d,c,.6); };
+const METAL = '<rect x="147.4" y="{y}" width="5.2" height="10" rx="1.6" fill="#CDD1D4" stroke="#7D868C" stroke-width=".7"/>';
 
-// 마네킹
+// 마네킹 + 스타일링용 하의(고정)
 const TORSO = 'M137,122 C120,126 102,128 92,136 C86,150 98,176 104,192 L110,290 C104,310 101,330 101,346 L199,346 C199,330 196,310 190,290 L196,192 C202,176 214,150 208,136 C198,128 180,126 163,122 Z';
 const NECK  = 'M139,90 L161,90 L163,126 L137,126 Z';
 const ARM   = 'M92,134 C80,140 76,160 76,182 L68,318 L86,321 L102,198 C104,178 100,148 92,134 Z';
 const LEG   = 'M101,344 L151,344 L151,372 L146,470 L142,588 L118,588 L110,470 C103,420 100,380 101,344 Z';
+const PANTS = 'M108,286 L192,286 C198,305 201,325 201,346 L197,470 L194,596 L154,596 L150,384 L146,596 L106,596 L103,470 L99,346 C99,325 102,305 108,286 Z';
+const SHOE  = 'M114,583 L143,583 C146,591 148,597 147,601 L107,601 C104,598 106,591 114,587 Z';
 
 // 상의 공통 몸판: neck = v | round | collar, hem = 밑단 y
 function topBody(neck, hem){
@@ -314,108 +313,88 @@ function topBody(neck, hem){
 }
 const SL_SHORT = 'M90,131 C78,137 71,158 71,182 L69,212 L101,219 L104,192 C102,170 100,146 93,131 Z';
 const SL_LONG  = 'M90,131 C78,137 73,160 73,182 L64,318 L89,322 L104,196 C104,172 100,146 93,131 Z';
-const SL_COAT  = 'M88,128 C75,134 69,160 69,184 L60,318 L92,324 L107,200 C107,172 103,145 95,128 Z';
-const coatHalf = (hem,close,hx,wx) => `M134,120 C118,123 100,126 88,133 C80,150 92,178 98,194 L${wx},300 L${hx},${hem} L152,${hem} L152,${close} Z`;
+const RAGLAN   = 'M134,121 C120,123 102,126 90,133 C78,138 73,160 73,182 L64,318 L89,322 L104,196 Z';
+const CUFF     = 'M65.5,304 L90.5,308 L89,322 L64,318 Z';
+const STAND    = 'M137,118 L136,103 Q150,110 164,103 L163,118 Q150,128 137,118 Z';
+const HOOD_O   = 'M116,128 C112,104 128,93 150,93 C172,93 188,104 184,128 C176,136 164,142 150,144 C136,142 124,136 116,128 Z';
+const HOOD_I   = 'M127,123 C127,108 137,101 150,101 C163,101 173,108 173,123 C167,131 159,136 150,137 C141,136 133,131 127,123 Z';
+const YOKE     = 'M137,118 C120,121 102,124 90,132 C86,146 94,168 100,188 L200,188 C206,168 214,146 210,132 C198,124 180,121 163,118 Z';
+const POLO_COLLAR = 'M138,116 L151,132 L135,140 L128,121 Z';
 
-const PANT_JOG = 'M108,286 L192,286 C198,305 201,325 201,346 L190,500 L186,578 L156,578 L150,382 L144,578 L114,578 L110,500 L99,346 C99,325 102,305 108,286 Z';
-const PANT_STR = 'M108,286 L192,286 C198,305 201,325 201,346 L197,470 L194,596 L154,596 L150,384 L146,596 L106,596 L103,470 L99,346 C99,325 102,305 108,286 Z';
-const SKIRT_H  = 'M108,286 L192,286 C198,305 202,330 203,350 L205,470 L95,470 L97,350 C98,330 102,305 108,286 Z';
-const SKIRT_A  = 'M108,286 L192,286 C200,320 214,400 222,462 Q150,478 78,462 C86,400 100,320 108,286 Z';
+const cuffs   = z => both(P(CUFF,z) + ribs(66,90,307,320,4,z.line));
+const hemBand = (hem,z) => P(`M99,${hem-12} L201,${hem-12} L201,${hem} L99,${hem} Z`,z) + ribs(99,201,hem-12,hem,5,z.line);
+const zip     = (y0,y1,t) => S(`M150,${y0} V${y1}`,t.line,3.6) + S(`M150,${y0} V${y1}`,t.fill,2.2) + S(`M150,${y0} V${y1}`,t.line,.7,true) + METAL.replace('{y}',y0+3);
+const hood    = f => P(HOOD_O,f.b) + P(HOOD_I,f.t) + P('M139,99 L161,99 L162,127 Q150,134 138,127 Z',f.k);
+const strings = t => { const d='M141,140 L139,196 M159,140 L161,196'; return S(d,t.line,2.8)+S(d,t.fill,1.6)
+  + '<rect x="137.6" y="194" width="3" height="8" rx="1" fill="#CDD1D4"/><rect x="159.4" y="194" width="3" height="8" rx="1" fill="#CDD1D4"/>'; };
+const roundRib = t => RIB('M136,120 Q150,140 164,120',t);
 
-/* 디자인 목록 — 새 디자인은 여기에 { id, name, note, draw } 를 추가 */
-const STYLES = {
-  top: [
-    { id:'scrub', name:'V넥 스크럽', note:'파이핑·가슴 포켓', draw:f =>
-        both(P(SL_SHORT,f)+S('M69.5,211 L101,218',f.trim,2.6))
-      + P(topBody('v',362),f) + S('M132,121 L150,172 L168,121',f.trim,3)
-      + P('M164,198 H190 V220 Q177,225 164,220 Z',f) + S('M171,198 V211',f.line)
-      + both(S('M110,302 H138 V332 H110 Z',f.line,1,true)) },
-    { id:'tunic', name:'차이나칼라 튜닉', note:'사선 여밈·간호 근무복', draw:f =>
-        both(P(SL_SHORT,f)+S('M69.5,211 L101,218',f.trim,2.6))
-      + P(topBody('round',362),f)
-      + T('M136,119 Q150,139 164,119 L165,111 Q150,131 135,111 Z',f)
-      + S('M160,128 C166,148 168,170 168,196 V362',f.trim,2)
-      + [212,246,280,314].map(y=>B(173,y,f,2.2)).join('')
-      + both(S('M110,302 H136 V330 H110 Z',f.line,1,true)) },
-    { id:'shirt', name:'셔츠', note:'긴소매·셔츠 칼라', draw:f =>
-        both(P(SL_LONG,f)+P('M65.5,304 L90.5,308 L89,322 L64,318 Z',f)+B(77,314,f,1.6))
-      + P(topBody('collar',346),f)
-      + S('M151,128 V346',f.line) + S('M145,128 V346',f.line,.8,true)
-      + [158,190,222,254,286,318].map(y=>B(148,y,f,2)).join('')
-      + P('M164,198 H186 V220 H164 Z',f)
-      + both(P('M138,116 L151,134 L134,143 L127,121 Z',f)) },
-    { id:'polo', name:'폴로', note:'카라·반소매', draw:f =>
-        both(P(SL_SHORT,f)+T('M69.5,205 L101,212 L101,219 L69,212 Z',f))
-      + P(topBody('collar',340),f)
-      + P('M145,128 H155 V172 H145 Z',f) + B(150,142,f,1.8) + B(150,160,f,1.8)
-      + S('M100,333 H200',f.line,1,true)
-      + both(T('M138,116 L151,132 L135,140 L128,121 Z',f)) },
-    { id:'tee', name:'라운드 티셔츠', note:'기본 반소매', draw:f =>
-        both(P(SL_SHORT,f)+S('M70,207 L101,214',f.line,1,true))
-      + P(topBody('round',338),f) + S('M136,120 Q150,140 164,120',f.trim,3.5)
-      + S('M100,331 H200',f.line,1,true) },
-  ],
-  bottom: [
-    { id:'jogger', name:'조거 팬츠', note:'밴딩·시보리 밑단', draw:f =>
-        P(PANT_JOG,f) + P('M108,286 L192,286 L194,298 L106,298 Z',f)
-      + S('M146,298 L142,322 M154,298 L158,322',f.trim,1.8) + S('M150,298 V378',f.line)
-      + both(S('M104,300 C112,312 116,322 118,334',f.line))
-      + both(P('M113.6,566 L144.4,566 L144,578 L114,578 Z',f)+ribs(114,144,566,578,5,f.line)) },
-    { id:'slacks', name:'일자 슬랙스', note:'주름선·벨트고리', draw:f =>
-        P(PANT_STR,f) + S('M106,298 H194',f.line) + both(S('M126,300 V596',f.line,.8))
-      + S('M150,298 C153,318 154,334 150,352',f.line)
-      + both(P('M117,286 H122 V303 H117 Z',f)) },
-    { id:'skirtH', name:'H라인 스커트', note:'무릎 길이·뒤트임', draw:f =>
-        P(SKIRT_H,f) + S('M106,298 H194',f.line) + S('M150,446 V470',f.line,1.2)
-      + both(S('M122,298 L124,326',f.line,.8)) },
-    { id:'skirtA', name:'A라인 스커트', note:'플리츠', draw:f =>
-        P(SKIRT_A,f) + S('M107,298 H193',f.line)
-      + S('M124,300 L108,468 M150,300 V476 M176,300 L192,468',f.line,.8) },
-  ],
-  outer: [
-    { id:'none', name:'없음', note:'아우터 미착용', draw:()=>'' },
-    { id:'labcoat', name:'가운(랩코트)', note:'무릎 길이·포켓 3', draw:f =>
-        both(P(SL_COAT,f)+S('M62,300 L94,306',f.line,1,true))
-      + both(P(coatHalf(486,236,88,97),f) + P('M134,120 L151,236 L124,174 L126,138 Z',f) + S('M100,382 H136 V414 H100',f.line,1,true))
-      + P('M166,206 H190 V230 H166 Z',f)
-      + [256,306,356,406,456].map(y=>B(150,y,f,2.6)).join('') },
-    { id:'jacket', name:'테일러드 재킷', note:'노치드 라펠·2버튼', draw:f =>
-        both(P(SL_COAT,f)+B(66,304,f,1.6)+B(71,306,f,1.6))
-      + both(P(coatHalf(362,284,99,104),f) + P('M134,120 L151,284 L119,186 L125,166 L130,166 L127,138 Z',f) + P('M106,324 H136 V331 H106 Z',f))
-      + S('M166,208 H188',f.line,2.2) + B(150,300,f,2.6) + B(150,334,f,2.6) },
-    { id:'cardigan', name:'가디건', note:'오픈 프런트·립 밴드', draw:f =>
-        both(P(SL_COAT,f)+P('M61,306 L93,311 L92,324 L60,318 Z',f)+ribs(61,92,307,322,5,f.line))
-      + both(P('M136,120 C118,123 100,126 88,133 C80,150 92,178 98,194 L104,300 L100,352 L145,352 L145,206 C142,170 139,140 136,120 Z',f)
-        + P('M100,340 L145,340 L145,352 L100,352 Z',f) + ribs(100,145,340,352,5,f.line)
-        + S('M136,120 C139,140 142,170 145,206 V352',f.trim,3))
-      + [222,254,286,318].map(y=>B(141.5,y,f,2.2)).join('') },
-  ],
-  shoes: [
-    { id:'sneaker', name:'스니커즈', note:'쿠션 밑창', draw:f =>
-        both(P('M114,583 L143,583 C146,591 148,597 147,601 L107,601 C104,598 106,591 114,587 Z',f)
-        + T('M105,600 H149 V606 Q149,608 147,608 H107 Q105,608 105,606 Z',f)
-        + S('M124,587 H136 M123,591 H137',f.line,.9)) },
-    { id:'clog', name:'간호화(클로그)', note:'통굽·통풍 구멍', draw:f =>
-        both(P('M110,579 L147,579 C152,590 152,600 149,604 L105,604 C101,598 102,586 110,579 Z',f)
-        + T('M103,603 H151 V609 H103 Z',f)
-        + [118,126,134,142].map(x=>`<circle cx="${x}" cy="586" r="1.4" fill="${f.line}"/>`).join('')) },
-    { id:'flat', name:'플랫 슈즈', note:'로우 굽', draw:f =>
-        both(P('M114,586 L144,586 C147,593 147,599 145,603 L110,603 C106,600 108,593 114,589 Z',f)
-        + T('M108,602 H147 V605 H108 Z',f)) },
-  ],
-};
-const THUMB_VB = { top:'58 104 184 272', bottom:'70 280 160 330', outer:'48 104 204 392', shoes:'96 572 108 42' };
-const styleOf = (part,id) => STYLES[part].find(s=>s.id===id) || STYLES[part][0];
-
-/* 예시 코디 — 상태 객체 그대로 */
-const PRESETS = [
-  { name:'병동 근무복', s:{ top:{style:'tunic',color:'#F6F6F2',pattern:'solid',trim:'#1F2A44'}, bottom:{style:'slacks',color:'#1F2A44',pattern:'solid',trim:'#1F2A44'}, outer:{style:'none',color:'#1F2A44',pattern:'solid',trim:'#F6F6F2'}, shoes:{style:'sneaker',color:'#F6F6F2',trim:'#C9C4BA'}, acc:{badge:true,lanyard:false,steth:true,cap:false,color:'#1F2A44'}, body:{skin:'#ECE8E2',build:'regular'} } },
-  { name:'수술실 스크럽', s:{ top:{style:'scrub',color:'#8FA6D0',pattern:'solid',trim:'#2E58A6'}, bottom:{style:'jogger',color:'#8FA6D0',pattern:'solid',trim:'#F6F6F2'}, outer:{style:'none',color:'#F6F6F2',pattern:'solid',trim:'#F6F6F2'}, shoes:{style:'clog',color:'#F6F6F2',trim:'#9AA0A6'}, acc:{badge:false,lanyard:true,steth:false,cap:true,color:'#2E58A6'}, body:{skin:'#E8CDB2',build:'regular'} } },
-  { name:'임상실습 학생', s:{ top:{style:'tunic',color:'#F6F6F2',pattern:'solid',trim:'#23817E'}, bottom:{style:'slacks',color:'#F6F6F2',pattern:'solid',trim:'#F6F6F2'}, outer:{style:'none',color:'#23817E',pattern:'solid',trim:'#F6F6F2'}, shoes:{style:'sneaker',color:'#F6F6F2',trim:'#F6F6F2'}, acc:{badge:true,lanyard:false,steth:false,cap:false,color:'#23817E'}, body:{skin:'#C99B76',build:'slim'} } },
-  { name:'외래·행정', s:{ top:{style:'shirt',color:'#B5D5EF',pattern:'stripe',trim:'#F6F6F2'}, bottom:{style:'skirtH',color:'#1F2A44',pattern:'solid',trim:'#1F2A44'}, outer:{style:'jacket',color:'#1F2A44',pattern:'solid',trim:'#C9C4BA'}, shoes:{style:'flat',color:'#1D1D1F',trim:'#1D1D1F'}, acc:{badge:true,lanyard:false,steth:false,cap:false,color:'#1F2A44'}, body:{skin:'#ECE8E2',build:'regular'} } },
-  { name:'교수·연구', s:{ top:{style:'shirt',color:'#F6F6F2',pattern:'solid',trim:'#F6F6F2'}, bottom:{style:'slacks',color:'#3A4249',pattern:'solid',trim:'#3A4249'}, outer:{style:'labcoat',color:'#F6F6F2',pattern:'solid',trim:'#F6F6F2'}, shoes:{style:'flat',color:'#1D1D1F',trim:'#3A4249'}, acc:{badge:true,lanyard:true,steth:false,cap:false,color:'#23817E'}, body:{skin:'#8A5A40',build:'broad'} } },
-  { name:'캐주얼', s:{ top:{style:'tee',color:'#EFC12F',pattern:'solid',trim:'#F6F6F2'}, bottom:{style:'skirtA',color:'#1E63D2',pattern:'check',trim:'#1E63D2'}, outer:{style:'cardigan',color:'#F2ECDF',pattern:'solid',trim:'#B3874F'}, shoes:{style:'sneaker',color:'#F6F6F2',trim:'#F6F6F2'}, acc:{badge:false,lanyard:false,steth:false,cap:false,color:'#1F2A44'}, body:{skin:'#E8CDB2',build:'slim'} } },
+/* 상의 스타일 — 새 스타일은 { id, group, name, note, trimNote, draw(f) } 를 추가
+   f.b 몸판 · f.s 소매 · f.t 배색(립·칼라·지퍼·안감) */
+const STYLES = [
+  { id:'roundS', group:'티셔츠', name:'라운드 반팔', note:'기본 반티', trimNote:'넥 립', draw:f =>
+      both(P(SL_SHORT,f.s)+S('M70,207 L101,214',f.s.line,1,true)) + P(topBody('round',338),f.b) + roundRib(f.t) + S('M100,331 H200',f.b.line,1,true) },
+  { id:'roundL', group:'티셔츠', name:'라운드 긴팔', note:'시보리 소매', trimNote:'넥 립', draw:f =>
+      both(P(SL_LONG,f.s)) + cuffs(f.s) + P(topBody('round',338),f.b) + roundRib(f.t) + S('M100,331 H200',f.b.line,1,true) },
+  { id:'vneck', group:'티셔츠', name:'V넥 반팔', note:'깔끔한 네크라인', trimNote:'넥 립', draw:f =>
+      both(P(SL_SHORT,f.s)+S('M70,207 L101,214',f.s.line,1,true)) + P(topBody('v',338),f.b) + RIB('M132,121 L150,172 L168,121',f.t,3) + S('M100,331 H200',f.b.line,1,true) },
+  { id:'raglan', group:'티셔츠', name:'나그랑 티', note:'사선 소매 배색', trimNote:'넥 립', draw:f =>
+      P(topBody('round',338),f.b) + both(P(RAGLAN,f.s)) + cuffs(f.s) + roundRib(f.t) + S('M100,331 H200',f.b.line,1,true) },
+  { id:'poloS', group:'카라티', name:'카라티 반팔', note:'2버튼 플래킷', trimNote:'칼라·소매 밴드', draw:f =>
+      both(P(SL_SHORT,f.s)+P('M69.5,205 L101,212 L101,219 L69,212 Z',f.t)) + P(topBody('collar',340),f.b)
+    + P('M145,128 H155 V172 H145 Z',f.b) + B(150,142,f.t,1.8) + B(150,160,f.t,1.8) + S('M100,333 H200',f.b.line,1,true)
+    + both(P(POLO_COLLAR,f.t)) },
+  { id:'poloL', group:'카라티', name:'카라티 긴팔', note:'립 커프스', trimNote:'칼라·커프스', draw:f =>
+      both(P(SL_LONG,f.s)) + cuffs(f.t) + P(topBody('collar',340),f.b)
+    + P('M145,128 H155 V172 H145 Z',f.b) + B(150,142,f.t,1.8) + B(150,160,f.t,1.8) + S('M100,333 H200',f.b.line,1,true)
+    + both(P(POLO_COLLAR,f.t)) },
+  { id:'sweat', group:'맨투맨·후드', name:'맨투맨', note:'립 밑단·V 거싯', trimNote:'넥 립', draw:f =>
+      both(P(SL_LONG,f.s)) + cuffs(f.s) + P(topBody('round',350),f.b) + hemBand(350,f.b) + roundRib(f.t)
+    + S('M144,131 L150,143 L156,131',f.b.line,1) },
+  { id:'halfzip', group:'맨투맨·후드', name:'반집업', note:'하이넥 하프 지퍼', trimNote:'지퍼', draw:f =>
+      both(P(SL_LONG,f.s)) + cuffs(f.s) + P(topBody('collar',350),f.b) + hemBand(350,f.b) + P(STAND,f.b) + zip(104,214,f.t) },
+  { id:'hoodie', group:'맨투맨·후드', name:'후드티', note:'캥거루 포켓', trimNote:'후드 안감·끈', draw:f =>
+      both(P(SL_LONG,f.s)) + cuffs(f.s) + P(topBody('round',352),f.b) + hemBand(352,f.b)
+    + P('M116,272 L184,272 L194,336 L106,336 Z',f.b) + both(S('M118,276 C113,292 109,306 107,322',f.b.line,1.4))
+    + hood(f) + strings(f.t) },
+  { id:'hoodzip', group:'맨투맨·후드', name:'후드집업', note:'풀 지퍼', trimNote:'후드 안감·지퍼', draw:f =>
+      both(P(SL_LONG,f.s)) + cuffs(f.s) + P(topBody('round',352),f.b) + hemBand(352,f.b)
+    + both(S('M112,280 L120,322',f.b.line,1.6)) + hood(f) + zip(142,352,f.t) + strings(f.t) },
+  { id:'jersey', group:'집업·아우터', name:'트레이닝 저지', note:'소매 2줄 라인', trimNote:'소매 라인·지퍼', draw:f =>
+      both(P(SL_LONG,f.s) + S('M86,138 C77,148 75,166 75,182 L66.5,304',f.t.fill,2.4) + S('M91,140 C82,150 80,167 80,183 L71.5,305',f.t.fill,2.4))
+    + cuffs(f.s) + P(topBody('collar',350),f.b) + hemBand(350,f.b) + P(STAND,f.b) + zip(104,350,f.t)
+    + both(S('M112,282 L118,320',f.b.line,1.6)) },
+  { id:'wind', group:'집업·아우터', name:'바람막이', note:'요크 배색·스트링', trimNote:'요크·지퍼', draw:f =>
+      both(P(SL_LONG,f.s) + S('M65.5,307 L90.3,311',f.s.line,1,true)) + P(topBody('collar',352),f.b)
+    + P(YOKE,f.t) + S('M100,188 H200',f.b.line,1.2) + P(STAND,f.t) + zip(104,352,f.t)
+    + S('M100,345 H200',f.b.line,1,true) + both(S('M112,262 L118,300',f.t.fill,2.2)) },
+  { id:'stadium', group:'집업·아우터', name:'야구점퍼', note:'스냅 단추·라인 립', trimNote:'칼라·소매·밑단 립', draw:f =>
+      both(P(SL_LONG,f.s)) + both(P(CUFF,f.t)+S('M65,310 L90,314 M64.6,314 L89.6,318',f.b.fill,1.3))
+    + P(topBody('round',352),f.b) + P('M99,338 L201,338 L201,352 L99,352 Z',f.t) + S('M99,343 H201 M99,347 H201',f.b.fill,1.4)
+    + RIB('M134,119 Q150,143 166,119',f.t,6) + S('M136,123 Q150,142 164,123',f.b.fill,1.2)
+    + S('M150,134 V338',f.b.line,1.2) + [160,196,232,268,304].map(y=>`<circle cx="150" cy="${y}" r="3" fill="#D6D9DC" stroke="#7D868C" stroke-width=".8"/>`).join('')
+    + both(S('M112,262 L118,300',f.b.line,2)) },
+  { id:'vest', group:'조끼', name:'단체 조끼', note:'봉사·행사용', trimNote:'테두리·단추', noSleeve:true, draw:f =>
+      P(topBody('v',352),f.b) + RIB('M132,121 L150,172 L168,121',f.t,3) + both(RIB('M90,134 C84,150 96,176 102,192',f.t,2.4))
+    + S('M150,172 V352',f.b.line,1.2) + [190,226,262,298].map(y=>B(150,y,f.t,2.4)).join('')
+    + both(S('M110,288 H138 V318 H110 Z',f.b.line,1,true)) + S('M100,345 H200',f.b.line,1,true) },
 ];
+const GROUPS = [...new Set(STYLES.map(s=>s.group))];
+const styleOf = id => STYLES.find(s=>s.id===id) || STYLES[0];
+const hasZip = id => ['halfzip','hoodzip','jersey','wind','stadium','vest'].includes(id);
+
+/* 예시 디자인 — 상태 객체 그대로 (sleeve:null = 몸판과 같은 색) */
+const PRESETS = [
+  { name:'체육대회 반티', s:{ style:'roundS', color:'#EFC12F', sleeve:null, trim:'#1D1D1F', pattern:'solid', print:{text:'3학년 2반', sub:'2026 SPORTS DAY', pos:'center', font:'gothic', color:'#1D1D1F'} } },
+  { name:'동아리 후드', s:{ style:'hoodie', color:'#1F2A44', sleeve:null, trim:'#B9BBBD', pattern:'solid', print:{text:'ROBOTICS', sub:'SINCE 2019', pos:'center', font:'gothic', color:'#F6F6F2'} } },
+  { name:'워크숍 카라티', s:{ style:'poloS', color:'#F6F6F2', sleeve:null, trim:'#1F2A44', pattern:'solid', print:{text:'TEAM HARMONY', sub:'', pos:'chest', font:'dohyeon', color:'#1F2A44'} } },
+  { name:'MT 맨투맨', s:{ style:'sweat', color:'#B9BBBD', sleeve:null, trim:'#B9BBBD', pattern:'solid', print:{text:'MT 2026', sub:'우리는 하나', pos:'center', font:'myeongjo', color:'#1F2A44'} } },
+  { name:'응원 야구점퍼', s:{ style:'stadium', color:'#6E2735', sleeve:'#F2ECDF', trim:'#F2ECDF', pattern:'solid', print:{text:'TIGERS', sub:'', pos:'chest', font:'gothic', color:'#F2ECDF'} } },
+  { name:'러닝크루 바람막이', s:{ style:'wind', color:'#1E63D2', sleeve:null, trim:'#F6F6F2', pattern:'solid', print:{text:'RUN CLUB', sub:'', pos:'chest', font:'gothic', color:'#F6F6F2'} } },
+  { name:'나그랑 응원티', s:{ style:'raglan', color:'#F6F6F2', sleeve:'#D2283E', trim:'#D2283E', pattern:'solid', print:{text:'FIGHTING!', sub:'', pos:'center', font:'pen', color:'#D2283E'} } },
+  { name:'봉사 조끼', s:{ style:'vest', color:'#EE8A2A', sleeve:null, trim:'#F6F6F2', pattern:'solid', print:{text:'자원봉사단', sub:'', pos:'center', font:'dohyeon', color:'#F6F6F2'} } },
+];
+const DEFAULT_BODY = { skin:'#ECE8E2', build:'regular', base:'#3F5573' };
 
 /* ============================================================
    4) 상태 · 저장
@@ -425,30 +404,39 @@ const store = {
   get(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
 };
-function sanitize(s){
-  const base = clone(PRESETS[0].s), out = {};
-  for(const k of Object.keys(base)) out[k] = Object.assign({}, base[k], (s && s[k]) || {});
-  for(const p of ['top','bottom','outer','shoes']) if(!STYLES[p].some(x=>x.id===out[p].style)) out[p].style = base[p].style;
+const HEXRE = /^#[0-9A-Fa-f]{6}$/;
+function sanitize(s, keepBody){
+  const base = Object.assign(clone(PRESETS[0].s), {body:clone(DEFAULT_BODY)});
+  s = s || {};
+  const out = Object.assign({}, base, s);
+  out.print = Object.assign({}, base.print, s.print || {});
+  out.body  = Object.assign({}, base.body, keepBody || {}, s.body || {});
+  if(!STYLES.some(x=>x.id===out.style)) out.style = base.style;
+  for(const k of ['color','trim']) if(!HEXRE.test(out[k]||'')) out[k] = base[k];
+  if(out.sleeve && !HEXRE.test(out.sleeve)) out.sleeve = null;
+  if(!PATTERNS.some(p=>p[0]===out.pattern)) out.pattern = 'solid';
+  if(!FONTS[out.print.font]) out.print.font = 'gothic';
+  if(!PRINT_POS.some(p=>p[0]===out.print.pos)) out.print.pos = 'center';
   if(!BUILDS[out.body.build]) out.body.build = 'regular';
+  out.print.text = String(out.print.text||'').slice(0,16); out.print.sub = String(out.print.sub||'').slice(0,24);
   return out;
 }
-let state = sanitize(store.get('uf-current') || PRESETS[0].s);
-let looks = (store.get('uf-looks') || []).filter(l=>l && l.s).map(l=>({name:String(l.name).slice(0,24), s:sanitize(l.s), t:l.t}));
-const ui = { tab:'top', target:{top:'color',bottom:'color',outer:'color',shoes:'color'}, hist:[], live:false, armed:null };
+let state = sanitize(store.get('gf-current') || PRESETS[0].s);
+let looks = (store.get('gf-looks') || []).filter(l=>l && l.s).map(l=>({name:String(l.name).slice(0,24), s:sanitize(l.s)}));
+const ui = { tab:'style', target:'color', hist:[], live:false, armed:null };
 
-function commit(fn){
-  ui.hist.push(JSON.stringify(state)); if(ui.hist.length>60) ui.hist.shift();
-  fn(); store.set('uf-current', state); render();
-}
+function snapshot(){ ui.hist.push(JSON.stringify(state)); if(ui.hist.length>60) ui.hist.shift(); }
+function commit(fn){ snapshot(); fn(); store.set('gf-current', state); render(); }
 
 /* ============================================================
    5) 렌더링
    ============================================================ */
 const $ = s => document.querySelector(s);
+const sleeveColor = s => s.sleeve || s.color;
 function patternDef(id, color, kind){
   const c2 = accentOf(color);
   let g = `<rect width="12" height="12" fill="${color}"/>`;
-  if(kind==='stripe') g += `<rect x="5.2" width="1.6" height="12" fill="${c2}"/>`;
+  if(kind==='border') g += `<rect y="7" width="12" height="5" fill="${c2}"/>`;
   if(kind==='check')  g += `<rect width="6" height="12" fill="${c2}" opacity=".42"/><rect width="12" height="6" fill="${c2}" opacity=".42"/>`;
   if(kind==='dot')    g += `<circle cx="3" cy="3" r="1.5" fill="${c2}"/><circle cx="9" cy="9" r="1.5" fill="${c2}"/>`;
   return `<pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse">${g}</pattern>`;
@@ -458,46 +446,38 @@ function defs(){
       <stop offset="0" stop-color="#000" stop-opacity=".17"/><stop offset=".3" stop-color="#fff" stop-opacity=".1"/>
       <stop offset=".56" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>
     <radialGradient id="floor"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>`;
-  for(const p of ['top','bottom','outer']) d += patternDef('pat-'+p, state[p].color, state[p].pattern);
-  const pv = ['top','bottom','outer'].includes(ui.tab) ? state[ui.tab].color : '#9AA0A6';
-  for(const [k] of PATTERNS) d += patternDef('pv-'+k, pv, k);
+  d += patternDef('pat-body', state.color, state.pattern) + patternDef('pat-sleeve', sleeveColor(state), state.pattern);
+  for(const [k] of PATTERNS) d += patternDef('pv-'+k, state.color, k);
   return `<defs>${d}</defs>`;
 }
-// fillFor(part) → 본판 채우기(메인: 패턴 참조, 미니: 단색)
-function partCtx(s, part, fillFor){
-  const c = s[part].color, t = s[part].trim || c;
-  return { fill:fillFor(part), color:c, line:lineOf(c), trim:t, trimLine:lineOf(t) };
+// mini=true 이면 패턴 대신 단색(저장 썸네일용)
+function ctx(s, mini){
+  const z = (c, fill) => ({ fill: mini ? c : fill, line: lineOf(c) });
+  return { b:z(s.color,'url(#pat-body)'), s:z(sleeveColor(s),'url(#pat-sleeve)'), t:{ fill:s.trim, line:lineOf(s.trim) }, k:{ fill:s.body.skin, line:mix(s.body.skin,-.22) } };
 }
-function figure(s, fillFor){
+function printSvg(s){
+  const p = s.print, text = p.text.trim();
+  if(p.pos==='none' || !text) return '';
+  const F = FONTS[p.font];
+  const width = str => [...str].reduce((a,ch)=>a+(/[ᄀ-ᇿ㄰-㆏가-힯]/.test(ch)?1:.62),0);
+  const line = (str, x, y, fs, max) => {
+    const size = fs * F.k, fit = width(str)*size*.92 > max ? ` textLength="${max}" lengthAdjust="spacingAndGlyphs"` : '';
+    return `<text x="${x}" y="${y}" text-anchor="middle" font-family="${F.css}, 'Black Han Sans', sans-serif" font-weight="${F.w}" font-size="${size}" fill="${p.color}"${fit}>${esc(str)}</text>`;
+  };
+  if(p.pos==='chest') return line(text, 177, 202, 10, 38) + (p.sub.trim() ? line(p.sub.trim(), 177, 212, 5.5, 38) : '');
+  return line(text, 150, 236, 23, 90) + (p.sub.trim() ? line(p.sub.trim(), 150, 252, 9, 80) : '');
+}
+function figure(s, mini){
   const sk = { fill:s.body.skin, line:mix(s.body.skin,-.22) };
+  const pants = { fill:s.body.base, line:lineOf(s.body.base) }, shoe = { fill:'#F4F4F1', line:'#A9AEB1' };
   let g = both(P(ARM,sk) + `<ellipse cx="76" cy="334" rx="9.5" ry="15" fill="${sk.fill}" stroke="${sk.line}"/>` + P(LEG,sk)) + P(NECK,sk) + P(TORSO,sk);
-  for(const part of ['shoes','bottom','top','outer']){
-    const st = styleOf(part, s[part].style);
-    g += `<g class="layer" data-part="${part}">${st.draw(partCtx(s,part,fillFor))}</g>`;
-  }
-  g += accSvg(s.acc);
+  g += both(P(SHOE,shoe) + `<path d="M105,600 H149 V606 Q149,608 147,608 H107 Q105,608 105,606 Z" fill="#E3E4E0" stroke="#A9AEB1" stroke-width=".9"/>`);
+  g += P(PANTS,pants) + S('M106,298 H194',pants.line) + both(S('M126,300 V596',pants.line,.8));
+  g += styleOf(s.style).draw(ctx(s, mini)) + printSvg(s);
   const k = BUILDS[s.body.build].k;
-  let head = `<ellipse cx="150" cy="66" rx="27" ry="33" fill="${sk.fill}" stroke="${sk.line}" stroke-width="1.1"/><ellipse cx="150" cy="66" rx="27" ry="33" fill="url(#shade)"/>`;
-  if(s.acc.cap){
-    const c = s.acc.color, l = lineOf(c);
-    head += `<path d="M121,62 C119,24 181,24 179,62 C168,56 132,56 121,62 Z" fill="${c}" stroke="${l}" stroke-width="1.1"/><path d="M121,62 C119,24 181,24 179,62 C168,56 132,56 121,62 Z" fill="url(#shade)"/>`
-          + S('M123,55 C138,50 162,50 177,55',l,.9,true);
-  }
+  const head = `<ellipse cx="150" cy="66" rx="27" ry="33" fill="${sk.fill}" stroke="${sk.line}" stroke-width="1.1"/><ellipse cx="150" cy="66" rx="27" ry="33" fill="url(#shade)"/>`;
   return `<ellipse cx="150" cy="610" rx="70" ry="9" fill="url(#floor)"/>
     <g transform="translate(150 0) scale(${k} 1) translate(-150 0)">${g}</g>${head}`;
-}
-function accSvg(a){
-  const c = a.color, l = lineOf(c);
-  let o = '';
-  if(a.lanyard) o += S('M139,121 L147,234 M161,121 L153,234',c,2.6)
-    + `<rect x="137" y="232" width="26" height="34" rx="2.5" fill="#FBFBF9" stroke="${l}" stroke-width=".9"/><rect x="141" y="237" width="9" height="11" fill="${c}" opacity=".55"/>`
-    + S('M141,254 H159 M141,259 H155','#9AA3A1',1.6);
-  if(a.badge) o += `<rect x="110" y="200" width="30" height="11" rx="1.5" fill="#FBFBF9" stroke="${l}" stroke-width=".8"/><rect x="110" y="200" width="30" height="3" rx="1" fill="${c}"/>`
-    + S('M114,207.5 H134','#8A9391',1.4);
-  if(a.steth) o += S('M137,123 C121,150 118,205 127,238',c,3.2) + S('M163,123 C177,146 179,182 172,206',c,3.2)
-    + `<circle cx="127" cy="245" r="7.5" fill="#C9CED2" stroke="#7D868C" stroke-width="1.2"/><circle cx="127" cy="245" r="3.5" fill="#9AA2A8"/>`
-    + S('M172,206 L166,222 M172,206 L178,222','#8E979D',2);
-  return o;
 }
 function ruler(){
   const top = 33, bot = 608, px = (bot-top)/165;
@@ -509,38 +489,32 @@ function ruler(){
   }
   return `<g class="ruler"><path d="M26,${top} V${bot} ${d}" fill="none" stroke-width="1"/>${t}</g>`;
 }
-const mainFill = part => ['top','bottom','outer'].includes(part) ? `url(#pat-${part})` : state[part].color;
 
 function renderStage(){
-  $('#fig').innerHTML = defs() + ruler() + figure(state, mainFill);
+  $('#fig').innerHTML = defs() + ruler() + figure(state, false);
   $('#build-label').textContent = BUILDS[state.body.build].label;
-  const outer = state.outer.style==='none' ? '' : ' + ' + styleOf('outer',state.outer.style).name;
-  $('#caption').textContent = `${styleOf('top',state.top.style).name} · ${styleOf('bottom',state.bottom.style).name} · ${styleOf('shoes',state.shoes.style).name}${outer}`;
+  const p = state.print, pr = p.pos!=='none' && p.text.trim() ? ` · 프린트 "${p.text.trim()}"` : '';
+  $('#caption').textContent = `${styleOf(state.style).name} · ${colorName(state.color)}${pr}`;
   $('#btn-undo').disabled = ui.hist.length===0;
 }
 function renderPresets(){
   const cur = JSON.stringify(state);
   $('#presets').innerHTML = PRESETS.map((p,i)=>{
-    const dots = [p.s.top.color,p.s.bottom.color,p.s.outer.style!=='none'?p.s.outer.color:p.s.shoes.color].map(c=>`<i style="background:${c}"></i>`).join('');
-    return `<button class="chip" data-act="preset" data-i="${i}" data-key="preset-${i}" aria-pressed="${JSON.stringify(sanitize(p.s))===cur}"><span class="dots">${dots}</span>${p.name}</button>`;
+    const dots = [p.s.color, p.s.sleeve||p.s.color, p.s.trim].map(c=>`<i style="background:${c}"></i>`).join('');
+    const pressed = JSON.stringify(sanitize(p.s, state.body))===cur;
+    return `<button class="chip" data-act="preset" data-i="${i}" data-key="preset-${i}" aria-pressed="${pressed}"><span class="dots">${dots}</span>${p.name}</button>`;
   }).join('');
 }
 function renderTabs(){
-  $('#tabs').innerHTML = PARTS.map(p=>`<button class="tab" role="tab" id="tab-${p.id}" data-act="tab" data-tab="${p.id}" data-key="tab-${p.id}" aria-selected="${ui.tab===p.id}">${p.label}</button>`).join('');
+  $('#tabs').innerHTML = TABS.map(([id,l])=>`<button class="tab" role="tab" id="tab-${id}" data-act="tab" data-tab="${id}" data-key="tab-${id}" aria-selected="${ui.tab===id}">${l}</button>`).join('');
 }
-function designSec(part){
-  const cards = STYLES[part].map(st=>{
-    const pressed = state[part].style===st.id;
-    const art = st.id==='none'
-      ? `<svg viewBox="0 0 100 100" aria-hidden="true"><circle class="none-ico" cx="50" cy="50" r="24" stroke-width="3"/><path class="none-ico" d="M33 67 67 33" stroke-width="3"/></svg>`
-      : `<svg viewBox="${THUMB_VB[part]}" aria-hidden="true">${st.draw(partCtx(state,part,mainFill))}</svg>`;
-    return `<button class="style-card" data-act="style" data-part="${part}" data-id="${st.id}" data-key="style-${part}-${st.id}" aria-pressed="${pressed}">${art}<span class="nm">${st.name}</span><span class="nt">${st.note}</span></button>`;
-  }).join('');
-  return `<div class="sec"><h3 class="sec-title">디자인 <span>${styleOf(part,state[part].style).name}</span></h3><div class="styles">${cards}</div></div>`;
-}
-function patternSec(part){
-  const chips = PATTERNS.map(([k,n])=>`<button class="chip" data-act="pattern" data-k="${k}" data-key="pat-${k}" aria-pressed="${state[part].pattern===k}"><svg viewBox="0 0 18 18" aria-hidden="true"><rect width="18" height="18" fill="url(#pv-${k})"/></svg>${n}</button>`).join('');
-  return `<div class="sec"><h3 class="sec-title">패턴</h3><div class="chips" style="flex-wrap:wrap">${chips}</div></div>`;
+function styleTab(){
+  const f = ctx(state, false);
+  return `<div class="sec"><h3 class="sec-title">상의 스타일 <span>${styleOf(state.style).name}</span></h3>${
+    GROUPS.map(g=>`<div class="grp-label">${g}</div><div class="styles">${
+      STYLES.filter(s=>s.group===g).map(st=>`<button class="style-card" data-act="style" data-id="${st.id}" data-key="style-${st.id}" aria-pressed="${state.style===st.id}">
+        <svg viewBox="50 86 200 284" aria-hidden="true">${st.draw(f)}</svg><span class="nm">${st.name}</span><span class="nt">${st.note}</span></button>`).join('')
+    }</div>`).join('')}</div>`;
 }
 function paletteHtml(value, act){
   const v = value.toUpperCase();
@@ -549,123 +523,138 @@ function paletteHtml(value, act){
   }</div></div>`).join('')
   + `<div class="pal-group"><span class="pal-label">사용자 지정</span><div class="custom">
       <input type="color" id="custom-color" value="${value}" aria-label="컬러 피커" data-act2="${act}">
-      <input type="text" id="hex-input" value="${v}" maxlength="7" spellcheck="false" aria-label="HEX 코드 입력" data-act2="${act}">
+      <input type="text" class="field" id="hex-input" value="${v}" maxlength="7" spellcheck="false" aria-label="HEX 코드 입력" data-act2="${act}">
       <span class="hex">Enter로 적용</span></div></div>`;
 }
-function colorSec(part){
-  const meta = PARTS.find(p=>p.id===part), tgt = ui.target[part];
-  const value = tgt==='trim' ? state[part].trim : state[part].color;
-  const seg = `<div class="seg" role="group" aria-label="색상 적용 대상">
-      <button data-act="target" data-t="color" data-key="tgt-color" aria-pressed="${tgt==='color'}">${part==='shoes'?'갑피':'본판'}</button>
-      <button data-act="target" data-t="trim" data-key="tgt-trim" aria-pressed="${tgt==='trim'}">${meta.trimLabel}</button></div>`;
-  return `<div class="sec"><h3 class="sec-title">색상</h3>${seg}
-    <div class="current"><span class="big" id="cur-swatch" style="background:${value}"></span><div><div class="nm" id="cur-name">${colorName(value)}</div><div class="hex" id="cur-hex">${value.toUpperCase()}</div></div></div>
-    ${paletteHtml(value,'color')}</div>`;
+function currentHtml(value, extra=''){
+  return `<div class="current"><span class="big" id="cur-swatch" style="background:${value}"></span><div><div class="nm" id="cur-name">${colorName(value)}</div><div class="hex" id="cur-hex">${value.toUpperCase()}</div></div>${extra}</div>`;
 }
-function accSec(){
-  const a = state.acc;
-  const tg = ACCS.map(([k,n,d])=>`<button class="tg" data-act="acc" data-k="${k}" data-key="acc-${k}" aria-pressed="${!!a[k]}"><span class="box"></span><span>${n}<small>${d}</small></span></button>`).join('');
-  return `<div class="sec"><h3 class="sec-title">소품 착용</h3><div class="toggles">${tg}</div></div>
-    <div class="sec"><h3 class="sec-title">소품 색상 <span>명찰 띠 · 줄 · 청진기 · 수술모</span></h3>
-    <div class="current"><span class="big" id="cur-swatch" style="background:${a.color}"></span><div><div class="nm" id="cur-name">${colorName(a.color)}</div><div class="hex" id="cur-hex">${a.color.toUpperCase()}</div></div></div>
-    ${paletteHtml(a.color,'acccolor')}</div>`;
+function colorTab(){
+  const st = styleOf(state.style);
+  if(st.noSleeve && ui.target==='sleeve') ui.target = 'color';
+  const tg = ui.target;
+  const value = tg==='trim' ? state.trim : tg==='sleeve' ? sleeveColor(state) : state.color;
+  const opts = [['color','몸판',''], ...(st.noSleeve?[]:[['sleeve','소매', state.sleeve?'':'몸판과 같음']]), ['trim','배색',st.trimNote]];
+  const seg = `<div class="seg" role="group" aria-label="색상 적용 부위">${opts.map(([k,l,n])=>`<button data-act="target" data-t="${k}" data-key="tgt-${k}" aria-pressed="${tg===k}">${l}${n?`<small>${n}</small>`:''}</button>`).join('')}</div>`;
+  const relink = tg==='sleeve' && state.sleeve ? `<button class="btn link" data-act="relink" data-key="relink">몸판과 같은 색으로</button>` : '';
+  const pats = PATTERNS.map(([k,n])=>`<button class="chip" data-act="pattern" data-k="${k}" data-key="pat-${k}" aria-pressed="${state.pattern===k}"><svg viewBox="0 0 18 18" aria-hidden="true"><rect width="18" height="18" fill="url(#pv-${k})"/></svg>${n}</button>`).join('');
+  return `<div class="sec"><h3 class="sec-title">색상 적용 부위</h3>${seg}
+      <p class="hint">${tg==='sleeve'?'소매만 다른 색으로 칠합니다. 나그랑·야구점퍼 배색에 쓰입니다.':tg==='trim'?`이 스타일의 배색 부위: ${st.trimNote}`:'몸판 색을 바꾸면 소매도 함께 바뀝니다(소매를 따로 정하지 않은 경우).'}</p>
+      ${currentHtml(value, relink)}${paletteHtml(value,'color')}</div>
+    <div class="sec"><h3 class="sec-title">원단 패턴 <span>몸판·소매에 적용</span></h3><div class="chips wrap">${pats}</div></div>`;
 }
-function bodySec(){
+function printTab(){
+  const p = state.print, F = FONTS[p.font];
+  const pos = PRINT_POS.map(([k,l])=>`<button data-act="ppos" data-k="${k}" data-key="ppos-${k}" aria-pressed="${p.pos===k}">${l}</button>`).join('');
+  const warn = p.pos==='center' && hasZip(state.style) ? `<p class="hint warn">이 스타일은 가운데에 지퍼나 단추가 있어 가슴 중앙 프린트가 갈라집니다. 왼쪽 가슴을 권장합니다.</p>` : '';
+  const fonts = Object.entries(FONTS).map(([k,f])=>`<button class="font-card" data-act="pfont" data-k="${k}" data-key="pfont-${k}" aria-pressed="${p.font===k}">
+      <span class="smp" style="font-family:${f.css},sans-serif;font-weight:${f.w}">${esc(p.text.trim()||'우리팀 2026')}</span><span class="nt">${f.label} · ${f.note}</span></button>`).join('');
+  return `<div class="sec"><h3 class="sec-title">문구</h3>
+      <div class="form-row"><label for="print-text">메인 문구 (최대 16자)</label><input class="field" id="print-text" maxlength="16" value="${esc(p.text)}" placeholder="예: 3학년 2반"></div>
+      <div class="form-row"><label for="print-sub">보조 문구 (선택, 최대 24자)</label><input class="field" id="print-sub" maxlength="24" value="${esc(p.sub)}" placeholder="예: 2026 SPORTS DAY"></div></div>
+    <div class="sec"><h3 class="sec-title">위치</h3><div class="seg" role="group" aria-label="프린트 위치">${pos}</div>${warn}</div>
+    <div class="sec"><h3 class="sec-title">서체 <span>${F.label}</span></h3><div class="fonts">${fonts}</div></div>
+    <div class="sec"><h3 class="sec-title">프린트 색상</h3>${currentHtml(p.color)}${paletteHtml(p.color,'pcolor')}</div>`;
+}
+function bodyTab(){
   const sk = SKINS.map(([n,h])=>`<button class="sw" style="background:${h};width:40px;height:40px" data-act="skin" data-c="${h}" data-key="skin-${h}" aria-pressed="${state.body.skin.toUpperCase()===h}" aria-label="${n}" title="${n}"></button>`).join('');
   const bd = Object.entries(BUILDS).map(([k,b])=>`<button data-act="build" data-k="${k}" data-key="build-${k}" aria-pressed="${state.body.build===k}">${b.label}</button>`).join('');
+  const bs = BASES.map(([n,h])=>`<button class="chip" data-act="base" data-c="${h}" data-key="base-${h}" aria-pressed="${state.body.base===h}"><span class="dots"><i style="background:${h}"></i></span>${n}</button>`).join('');
   return `<div class="sec"><h3 class="sec-title">마네킹 톤 <span>${colorName(state.body.skin)}</span></h3><div class="sw-row">${sk}</div></div>
-    <div class="sec"><h3 class="sec-title">체형</h3><div class="seg" role="group" aria-label="체형">${bd}</div></div>`;
+    <div class="sec"><h3 class="sec-title">체형</h3><div class="seg" role="group" aria-label="체형">${bd}</div></div>
+    <div class="sec"><h3 class="sec-title">코디용 하의 <span>디자인 대상 아님</span></h3><div class="chips wrap">${bs}</div>
+      <p class="hint">상의가 실제 착용 시 어떻게 보이는지 확인하기 위한 배경 하의입니다.</p></div>`;
 }
 function renderPanel(){
-  const t = ui.tab, part = PARTS.find(p=>p.id===t);
-  let h = '';
-  if(part.garment) h = designSec(t) + (state[t].style==='none' ? '' : patternSec(t) + colorSec(t));
-  else if(t==='shoes') h = designSec(t) + colorSec(t);
-  else if(t==='acc') h = accSec();
-  else h = bodySec();
   const body = $('#panel-body');
-  body.innerHTML = h;
-  body.setAttribute('aria-labelledby','tab-'+t);
+  body.innerHTML = ({style:styleTab, color:colorTab, print:printTab, body:bodyTab})[ui.tab]();
+  body.setAttribute('aria-labelledby','tab-'+ui.tab);
 }
-function patName(k){ return (PATTERNS.find(p=>p[0]===k)||PATTERNS[0])[1]; }
+const patName = k => (PATTERNS.find(p=>p[0]===k)||PATTERNS[0])[1];
 function specRows(){
-  const s = state, r = [];
-  r.push(['상의', styleOf('top',s.top.style).name, s.top.color, patName(s.top.pattern), s.top.trim]);
-  r.push(['하의', styleOf('bottom',s.bottom.style).name, s.bottom.color, patName(s.bottom.pattern), s.bottom.trim]);
-  if(s.outer.style!=='none') r.push(['아우터', styleOf('outer',s.outer.style).name, s.outer.color, patName(s.outer.pattern), s.outer.trim]);
-  else r.push(['아우터','없음',null,'—',null]);
-  r.push(['신발', styleOf('shoes',s.shoes.style).name, s.shoes.color, '—', s.shoes.trim]);
-  const acc = ACCS.filter(([k])=>s.acc[k]).map(x=>x[1]).join(', ');
-  r.push(['소품', acc || '없음', acc ? s.acc.color : null, '—', null]);
-  r.push(['마네킹', BUILDS[s.body.build].label+' 체형', s.body.skin, '—', null]);
-  return r;
+  const s = state, st = styleOf(s.style), p = s.print;
+  const rows = [
+    ['스타일', `${st.name}`, st.group],
+    ['몸판', s.color, patName(s.pattern)],
+  ];
+  if(!st.noSleeve) rows.push(['소매', sleeveColor(s), s.sleeve ? '배색' : '몸판과 동일']);
+  rows.push(['배색', s.trim, st.trimNote]);
+  rows.push(['프린트', p.pos==='none'||!p.text.trim() ? '없음' : `"${p.text.trim()}"${p.sub.trim()?` / "${p.sub.trim()}"`:''}`,
+             p.pos==='none'||!p.text.trim() ? '' : `${PRINT_POS.find(x=>x[0]===p.pos)[1]} · ${FONTS[p.font].label} · ${colorName(p.color)} ${p.color.toUpperCase()}`]);
+  return rows;
 }
-const cl = h => h ? `<span class="cl"><i style="background:${h}"></i><span>${colorName(h)}<span class="hex">${h.toUpperCase()}</span></span></span>` : '—';
+const isHex = v => HEXRE.test(v);
 function renderSpec(){
   const rows = specRows();
-  $('#spec').innerHTML = `<table class="spec"><thead><tr><th>부위</th><th>디자인</th><th>본판</th><th>포인트</th></tr></thead><tbody>${
-    rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}${r[3]!=='—'?`<small>${r[3]}</small>`:''}</td><td>${cl(r[2])}</td><td>${cl(r[4])}</td></tr>`).join('')}</tbody></table>`;
+  $('#spec').innerHTML = `<table class="spec"><tbody>${rows.map(([k,v,n])=>`<tr><th scope="row">${k}</th><td>${
+    isHex(v) ? `<span class="cl"><i style="background:${v}"></i>${colorName(v)} <span class="hex">${v.toUpperCase()}</span></span>` : esc(v)
+  }${n?`<br><small>${esc(n)}</small>`:''}</td></tr>`).join('')}</tbody></table>`;
   const d = new Date();
   $('#spec-date').textContent = `작성일 ${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
-  const txt = h => h ? `${colorName(h)} ${h.toUpperCase()}` : '-';
-  $('#spec-text').textContent = '[유니폼 피팅 랩 · 디자인 사양서]\n' + rows.map(r=>`${r[0]}: ${r[1]} / 본판 ${txt(r[2])} / 패턴 ${r[3]} / 포인트 ${txt(r[4])}`).join('\n');
+  $('#spec-text').textContent = '[단체복 피팅 랩 · 디자인 사양서]\n' + rows.map(([k,v,n])=>`${k}: ${isHex(v)?`${colorName(v)} ${v.toUpperCase()}`:v}${n?` (${n})`:''}`).join('\n');
 }
 function renderLooks(){
-  if(!looks.length){ $('#looks').innerHTML = `<p class="empty">아직 저장한 코디가 없습니다. 이름을 입력하고 저장하면 여기에서 다시 불러올 수 있습니다.</p>`; return; }
+  if(!looks.length){ $('#looks').innerHTML = `<p class="empty">아직 저장한 디자인이 없습니다. 이름을 입력하고 저장하면 여기에서 다시 불러올 수 있습니다.</p>`; return; }
   $('#looks').innerHTML = `<div class="looks">${looks.map((l,i)=>`
-    <div class="look"><button class="load" data-act="load" data-i="${i}" data-key="load-${i}" aria-label="${l.name} 불러오기">
-      <svg viewBox="40 18 220 604" aria-hidden="true">${figure(l.s, p=>l.s[p].color)}</svg><span class="nm">${l.name}</span></button>
+    <div class="look"><button class="load" data-act="load" data-i="${i}" data-key="load-${i}" aria-label="${esc(l.name)} 불러오기">
+      <svg viewBox="40 18 220 604" aria-hidden="true">${figure(l.s, true)}</svg><span class="nm">${esc(l.name)}</span></button>
       <button class="del${ui.armed===i?' armed':''}" data-act="del" data-i="${i}" data-key="del-${i}">${ui.armed===i?'삭제 확인':'삭제'}</button></div>`).join('')}</div>`;
 }
 function render(){
   const key = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.key : null;
+  const fid = document.activeElement && document.activeElement.id;
   renderStage(); renderPresets(); renderTabs(); renderPanel(); renderSpec(); renderLooks();
-  if(key){ const el = document.querySelector(`[data-key="${CSS.escape(key)}"]`); if(el) el.focus({preventScroll:true}); }
+  const el = key ? document.querySelector(`[data-key="${CSS.escape(key)}"]`) : (fid ? document.getElementById(fid) : null);
+  if(el) el.focus({preventScroll:true});
 }
 
 /* ============================================================
    6) 상호작용
    ============================================================ */
 let toastTimer;
-function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),1800); }
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),1900); }
 function setColor(act, c){
-  if(act==='acccolor'){ state.acc.color = c; return; }
-  const p = ui.tab; state[p][ui.target[p]==='trim'?'trim':'color'] = c;
+  if(act==='pcolor'){ state.print.color = c; return; }
+  if(ui.target==='trim') state.trim = c;
+  else if(ui.target==='sleeve') state.sleeve = (c===state.color ? null : c);
+  else state.color = c;
 }
 const pick = a => a[Math.floor(Math.random()*a.length)];
 function randomLook(){
-  const uni = PALETTE[0].colors.map(c=>c[1]), all = PALETTE.flatMap(g=>g.colors.map(c=>c[1]));
-  const s = clone(state);
-  for(const p of ['top','bottom','outer']){
-    const pool = p==='outer' && Math.random()<.45 ? STYLES.outer.filter(x=>x.id==='none') : STYLES[p].filter(x=>x.id!=='none');
-    s[p].style = pick(pool).id; s[p].color = pick(Math.random()<.6?uni:all); s[p].trim = pick(all);
-    s[p].pattern = Math.random()<.75 ? 'solid' : pick(PATTERNS)[0];
-  }
-  s.shoes.style = pick(STYLES.shoes).id; s.shoes.color = pick(['#F6F6F2','#1D1D1F','#1F2A44','#C9C4BA']); s.shoes.trim = pick(['#F6F6F2','#9AA0A6','#1D1D1F']);
-  return s;
+  const team = PALETTE[1].colors.map(c=>c[1]), basic = PALETTE[0].colors.map(c=>c[1]), all = PALETTE.flatMap(g=>g.colors.map(c=>c[1]));
+  const st = pick(STYLES), color = pick(Math.random()<.6?team:all);
+  const contrast = ['raglan','stadium'].includes(st.id) || Math.random()<.15;
+  const ink = lum(color) < .3 ? '#F6F6F2' : '#1D1D1F';
+  return sanitize({ style:st.id, color, sleeve: contrast ? pick(basic.filter(c=>c!==color)) : null, trim: pick([...basic, ...team]),
+    pattern: Math.random()<.8 ? 'solid' : pick(PATTERNS)[0],
+    print:{ text:state.print.text || '우리팀', sub:state.print.sub, pos: hasZip(st.id) ? 'chest' : pick(['chest','center']), font:pick(Object.keys(FONTS)), color:ink },
+    body: state.body });
 }
 
 document.addEventListener('click', e=>{
   const b = e.target.closest('[data-act]'); if(!b) return;
   const act = b.dataset.act, d = b.dataset;
-  if(act!=='del' && ui.armed!==null){ ui.armed = null; }
+  if(act!=='del') ui.armed = null;
   switch(act){
     case 'tab': ui.tab = d.tab; render(); break;
-    case 'style': commit(()=>{ state[d.part].style = d.id; }); break;
-    case 'pattern': commit(()=>{ state[ui.tab].pattern = d.k; }); break;
-    case 'target': ui.target[ui.tab] = d.t; render(); break;
-    case 'color': case 'acccolor': commit(()=>setColor(act, d.c)); break;
-    case 'acc': commit(()=>{ state.acc[d.k] = !state.acc[d.k]; }); break;
+    case 'style': commit(()=>{ state.style = d.id; }); break;
+    case 'pattern': commit(()=>{ state.pattern = d.k; }); break;
+    case 'target': ui.target = d.t; render(); break;
+    case 'relink': commit(()=>{ state.sleeve = null; }); break;
+    case 'color': case 'pcolor': commit(()=>setColor(act, d.c)); break;
+    case 'ppos': commit(()=>{ state.print.pos = d.k; }); break;
+    case 'pfont': commit(()=>{ state.print.font = d.k; }); break;
     case 'skin': commit(()=>{ state.body.skin = d.c; }); break;
     case 'build': commit(()=>{ state.body.build = d.k; }); break;
-    case 'preset': commit(()=>{ state = sanitize(clone(PRESETS[+d.i].s)); }); toast(`'${PRESETS[+d.i].name}' 코디를 입혔습니다`); break;
+    case 'base': commit(()=>{ state.body.base = d.c; }); break;
+    case 'preset': commit(()=>{ state = sanitize(clone(PRESETS[+d.i].s), state.body); }); toast(`'${PRESETS[+d.i].name}' 디자인을 입혔습니다`); break;
     case 'random': commit(()=>{ state = randomLook(); }); break;
-    case 'reset': commit(()=>{ state = sanitize(clone(PRESETS[0].s)); }); toast('기본 코디로 되돌렸습니다'); break;
-    case 'undo': if(ui.hist.length){ state = JSON.parse(ui.hist.pop()); store.set('uf-current',state); render(); } break;
+    case 'reset': commit(()=>{ state = sanitize(clone(PRESETS[0].s)); }); toast('기본 디자인으로 되돌렸습니다'); break;
+    case 'undo': if(ui.hist.length){ state = JSON.parse(ui.hist.pop()); store.set('gf-current',state); render(); } break;
     case 'load': commit(()=>{ state = sanitize(clone(looks[+d.i].s)); }); toast(`'${looks[+d.i].name}'을(를) 불러왔습니다`); break;
     case 'del': {
       const i = +d.i;
-      if(ui.armed===i){ looks.splice(i,1); ui.armed=null; store.set('uf-looks',looks); toast('삭제했습니다'); }
+      if(ui.armed===i){ looks.splice(i,1); ui.armed=null; store.set('gf-looks',looks); toast('삭제했습니다'); }
       else ui.armed = i;
       renderLooks(); const el=document.querySelector(`[data-key="del-${i}"]`); if(el) el.focus(); break;
     }
@@ -677,35 +666,42 @@ document.addEventListener('click', e=>{
     }
   }
 });
-// 컬러 피커: 드래그 중에는 스테이지만 갱신하고, 확정(change) 시 패널 전체 갱신
-function liveColor(act, c){
-  if(!ui.live){ ui.hist.push(JSON.stringify(state)); ui.live = true; }
-  setColor(act, c); store.set('uf-current', state); renderStage(); renderSpec();
-  const sw=$('#cur-swatch'), nm=$('#cur-name'), hx=$('#cur-hex'), hi=$('#hex-input');
-  if(sw) sw.style.background=c; if(nm) nm.textContent=colorName(c); if(hx) hx.textContent=c.toUpperCase(); if(hi) hi.value=c.toUpperCase();
+// 컬러 피커·문구 입력: 입력 중에는 스테이지만 갱신, 확정(change) 시 패널 전체 갱신
+function live(fn){
+  if(!ui.live){ snapshot(); ui.live = true; }
+  fn(); store.set('gf-current', state); renderStage(); renderSpec();
 }
 document.addEventListener('input', e=>{
-  if(e.target.id==='custom-color') liveColor(e.target.dataset.act2, e.target.value.toUpperCase());
+  const t = e.target;
+  if(t.id==='custom-color') live(()=>{
+    const c = t.value.toUpperCase(); setColor(t.dataset.act2, c);
+    const sw=$('#cur-swatch'), nm=$('#cur-name'), hx=$('#cur-hex'), hi=$('#hex-input');
+    if(sw) sw.style.background=c; if(nm) nm.textContent=colorName(c); if(hx) hx.textContent=c; if(hi) hi.value=c;
+  });
+  if(t.id==='print-text') live(()=>{ state.print.text = t.value.slice(0,16); if(state.print.pos==='none' && t.value.trim()) state.print.pos = hasZip(state.style)?'chest':'center'; });
+  if(t.id==='print-sub')  live(()=>{ state.print.sub = t.value.slice(0,24); });
 });
 document.addEventListener('change', e=>{
-  if(e.target.id==='custom-color'){ ui.live=false; render(); }
+  if(['custom-color','print-text','print-sub'].includes(e.target.id)){ ui.live=false; render(); }
 });
 document.addEventListener('keydown', e=>{
   if(e.target.id==='hex-input' && e.key==='Enter'){
     e.preventDefault();
     let v = e.target.value.trim(); if(!v.startsWith('#')) v = '#'+v;
-    if(/^#[0-9a-fA-F]{6}$/.test(v)){ e.target.removeAttribute('aria-invalid'); const act=e.target.dataset.act2; commit(()=>setColor(act, v.toUpperCase())); }
+    if(HEXRE.test(v)){ e.target.removeAttribute('aria-invalid'); const act=e.target.dataset.act2; commit(()=>setColor(act, v.toUpperCase())); }
     else { e.target.setAttribute('aria-invalid','true'); toast('HEX 코드는 #과 6자리(예: #1F2A44)로 입력하세요'); }
   }
 });
 $('#save-form').addEventListener('submit', e=>{
   e.preventDefault();
   const inp = $('#look-name');
-  const name = inp.value.trim() || `코디 ${looks.length+1}`;
-  looks.unshift({ name:name.slice(0,24), s:clone(state), t:Date.now() });
+  const name = (inp.value.trim() || `디자인 ${looks.length+1}`).slice(0,24);
+  looks.unshift({ name, s:clone(state) });
   if(looks.length>24) looks.length = 24;
-  store.set('uf-looks', looks); inp.value=''; renderLooks(); toast(`'${name}'을(를) 저장했습니다`);
+  store.set('gf-looks', looks); inp.value=''; renderLooks(); toast(`'${name}'을(를) 저장했습니다`);
 });
+// 웹폰트가 늦게 로드되면 SVG 프린트 글자를 다시 그림
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>renderStage());
 
 render();
 </script>
